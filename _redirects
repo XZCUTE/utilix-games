@@ -1,0 +1,9 @@
+# Redirects for Cloudflare Pages
+# Redirect all 404s to index.html for SPA behavior
+/*  /index.html  200
+
+# Example of redirect from old URL to new URL
+# /old-page  /new-page  301
+
+# Example of redirect with query parameters
+# /old-search  /new-search  301 

@@ -1,0 +1,26 @@
+name = "utilix-games"
+type = "webpack"
+account_id = "" # Add your Cloudflare account ID here
+workers_dev = true
+route = ""
+zone_id = "" # Add your zone ID if you're deploying to a custom domain
+
+[site]
+bucket = "." # Your static files
+entry-point = "workers-site"
+
+[env.production]
+# Production-specific settings
+workers_dev = false
+
+[env.staging]
+# Staging-specific settings
+name = "utilix-games-staging"
+
+[build]
+command = "" # No build step needed since it's a static site
+upload.format = "service-worker"
+
+[build.upload]
+dir = "."
+format = "service-worker" 
