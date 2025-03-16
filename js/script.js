@@ -142,10 +142,18 @@ async function loadGamesData() {
         // Show loading status
         isLoading = true;
         
-        // Load and parse both game files
+        // Set base path based on window location
+        // This ensures we use the correct path whether we're on the main domain or a deployment URL
+        const basePath = window.location.pathname.includes('/index.html') 
+            ? window.location.pathname.replace('/index.html', '/')
+            : '/';
+        
+        console.log(`Loading games from base path: ${basePath}`);
+        
+        // Load and parse both game files with absolute paths from root
         const [distributionGamesData, additionalGamesData] = await Promise.all([
-            fetchAndParseGames('distributiongames.json'),
-            fetchAndParseGames('additionalgames.json')
+            fetchAndParseGames(basePath + 'distributiongames.json'),
+            fetchAndParseGames(basePath + 'additionalgames.json')
         ]);
         
         // Store additional games separately
@@ -335,8 +343,8 @@ function openGameModal(game) {
         imageUrl = "https://img.gamedistribution.com/18de67bea855444c9c571868cc405c1d-512x384.jpeg";
     } else if (game.title === "Two Hands of Satan") {
         console.log("Using hardcoded image for Two Hands of Satan");
-        imageUrl = "https://img.gamedistribution.com/f804d079d19d413b9871274d4ed72e4c-512x384.jpeg";
-    }
+        imageUrl = "https://img.gamedistribution.com/ae98387afcf84c0da38e5ab0e70e5235-512x384.jpeg";
+    } 
     // Only check assetList if we didn't already set a hardcoded image
     else if (game.assetList && game.assetList.length > 0) {
         const assetList = Array.isArray(game.assetList) ? game.assetList : [game.assetList];

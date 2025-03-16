@@ -86,17 +86,18 @@ function loadGameData(gameId) {
     
     console.log(`Attempting to load game: "${decodedGameId}" (${gameId})`);
     
-    // Special case for Two Hands of Satan - handle this first
-    if (decodedGameId === "Two Hands of Satan" || gameId === "Two%20Hands%20of%20Satan") {
-        console.log("Game matched Two Hands of Satan, loading manually");
-        loadTwoHandsOfSatan();
-        return;
-    }
+    // Set base path based on window location
+    // This ensures we use the correct path whether we're on the main domain or a deployment URL
+    const basePath = window.location.pathname.includes('/player.html') 
+        ? window.location.pathname.replace('/player.html', '/')
+        : '/';
+    
+    console.log(`Loading games from base path: ${basePath}`);
     
     // Try to load games directly first
     Promise.all([
-        fetchAndParseGameFile('distributiongames.json'),
-        fetchAndParseGameFile('additionalgames.json')
+        fetchAndParseGameFile(basePath + 'distributiongames.json'),
+        fetchAndParseGameFile(basePath + 'additionalgames.json')
     ])
     .then(([distributionGames, additionalGames]) => {
         // Combine all games into a single array
@@ -184,14 +185,11 @@ function fetchAndParseGameFile(fileName) {
 function findGameByTitle(games, decodedGameId, encodedGameId) {
     if (!games || games.length === 0) return null;
     
-    // First try exact match with proper decoding of both sides
+    // First try exact match
     let game = games.find(g => 
         g && g.title && (
             g.title === decodedGameId || 
-            encodeURIComponent(g.title) === encodedGameId ||
-            // Additional matching attempts for better detection
-            decodeURIComponent(g.title) === decodedGameId ||
-            g.title === decodeURIComponent(encodedGameId)
+            encodeURIComponent(g.title) === encodedGameId
         )
     );
     
@@ -565,6 +563,28 @@ function loadAxeOfTheAncients() {
     updatePlayer(gameData);
 }
 
+// Add a special case handler for Two Hands of Satan
+function loadTwoHandsOfSatan() {
+    const game = {
+        title: "Two Hands of Satan",
+        description: "Two Hands of Satan is a thrilling multiplayer first-person shooter that plunges players into intense, chaotic battles. This free-to-play game is designed to captivate with fast-paced, competitive gameplay, setting it apart in the shooter genre.",
+        url: "https://html5.gamedistribution.com/ae98387afcf84c0da38e5ab0e70e5235/?gd_sdk_referrer_url=https://gamedistribution.com/games/two-hands-of-satan",
+        instructions: "Mouse - Shooting, WASD keys - Movement, Spacebar - Jump, SHIFT - Sprint, 1 || 4 - Change weapon, H - Medkit, T - Chat, C - Crouch, TAB - Score, ESC - Pause",
+        categoryList: [
+            {name: "Action Games"},
+            {name: "3D Games"},
+            {name: "Multiplayer Games"},
+            {name: "Shooting Games"},
+            {name: "HTML5 games"},
+            {name: "WebGL Games"}
+        ]
+    };
+
+    console.log("Manually loaded Two Hands of Satan game");
+    gameData = game;
+    updatePlayer(game);
+}
+
 // Function to retry loading the game
 function retryLoading() {
     location.reload();
@@ -583,31 +603,4 @@ window.addEventListener('resize', function() {
         gameCanvas.width = gameFrameContainer.clientWidth;
         gameCanvas.height = gameFrameContainer.clientHeight;
     }
-});
-
-// Add a function to handle "Two Hands of Satan" game specifically
-function loadTwoHandsOfSatan() {
-    const game = {
-        title: "Two Hands of Satan",
-        description: "Two Hands of Satan is a thrilling multiplayer first-person shooter that plunges players into intense, chaotic battles. This free-to-play game is designed to captivate with fast-paced, competitive gameplay, setting it apart in the shooter genre.",
-        url: "https://html5.gamedistribution.com/f804d079d19d413b9871274d4ed72e4c/?gd_sdk_referrer_url=https://gamedistribution.com/games/two-hands-of-satan",
-        instructions: "Mouse - Shooting, WASD keys - Movement, Spacebar - Jump, SHIFT - Sprint, 1 || 4 - Change weapon, H - Medkit, T - Chat, C - Crouch, TAB - Score, ESC - Pause",
-        categoryList: [
-            {name: "Action Games"},
-            {name: "3D Games"},
-            {name: "Multiplayer Games"},
-            {name: "Shooting Games"},
-            {name: "HTML5 games"},
-            {name: "WebGL Games"}
-        ]
-    };
-    
-    console.log("Manually loading Two Hands of Satan game");
-    gameData = game;
-    updatePlayer(game);
-    
-    // Set the title and header after updating the player
-    document.title = `Playing: ${game.title} | Utilix Games`;
-    const gameTitle = document.getElementById('game-title');
-    if (gameTitle) gameTitle.textContent = game.title;
-} 
+}); 
