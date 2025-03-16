@@ -169,7 +169,8 @@ async function loadGamesData() {
 // Helper function to fetch and parse a game file
 async function fetchAndParseGames(fileName) {
     try {
-        const response = await fetch(fileName);
+        // Use absolute path starting with / to ensure it's relative to domain root
+        const response = await fetch('/' + fileName);
         if (!response.ok) {
             console.warn(`Error loading from ${fileName}: ${response.status}`);
             return [];

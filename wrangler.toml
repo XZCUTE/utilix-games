@@ -1,0 +1,32 @@
+name = "utilix-games"
+compatibility_date = "2023-11-21"
+compatibility_flags = ["nodejs_compat"]
+
+[site]
+bucket = "."
+
+[build]
+command = ""
+upload.format = "directory"
+output_directory = "."
+
+# Ensure all routes direct to index.html for single-page application
+[[routes]]
+pattern = "/*"
+script = ""
+fallback_service = ""
+
+# Configure headers for JSON files to ensure proper content-type
+[[headers]]
+pattern = "*.json"
+[headers.cache]
+browser_ttl = 3600
+swr = true
+[headers.response]
+content-type = "application/json"
+
+# Explicitly enable CORS for all origins
+[[headers]]
+pattern = "**/*"
+[headers.response]
+Access-Control-Allow-Origin = "*" 
