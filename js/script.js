@@ -319,9 +319,23 @@ function openGameModal(game) {
     
     // Update image
     const modalImg = document.getElementById('modal-game-image');
+    
+    // IMPORTANT: Set a default image first, before any logic
     let imageUrl = 'img/placeholder.jpg';
     
-    if (game.assetList && game.assetList.length > 0) {
+    // Special case for specific games to ensure they always have images - checking first
+    if (game.title === "Axe of the Ancients: Dwarven Fury") {
+        console.log("Using hardcoded image for Axe of the Ancients: Dwarven Fury");
+        imageUrl = "https://img.gamedistribution.com/c3238ecc4c3f4550a8f9fc9599cbc189-512x384.jpeg";
+    } else if (game.title === "Revenge and Justice") {
+        console.log("Using hardcoded image for Revenge and Justice");
+        imageUrl = "https://img.gamedistribution.com/ded5788b27ca45c9b0934c2186de9749-512x384.jpeg";
+    } else if (game.title === "Arena Baby Tournament") {
+        console.log("Using hardcoded image for Arena Baby Tournament");
+        imageUrl = "https://img.gamedistribution.com/18de67bea855444c9c571868cc405c1d-512x384.jpeg";
+    } 
+    // Only check assetList if we didn't already set a hardcoded image
+    else if (game.assetList && game.assetList.length > 0) {
         const assetList = Array.isArray(game.assetList) ? game.assetList : [game.assetList];
         const thumbnails = assetList.filter(asset => 
             asset.type === 'thumbnail' || 
@@ -330,18 +344,13 @@ function openGameModal(game) {
         
         if (thumbnails.length > 0) {
             imageUrl = thumbnails[0].url;
+        } else {
+            // Use the first asset if no explicit thumbnail
+            imageUrl = assetList[0].url || assetList[0].name || imageUrl;
         }
     }
     
-    // Special case for specific games to ensure they always have images
-    if (game.title === "Axe of the Ancients: Dwarven Fury") {
-        imageUrl = "https://img.gamedistribution.com/c3238ecc4c3f4550a8f9fc9599cbc189-512x384.jpeg";
-    } else if (game.title === "Revenge and Justice") {
-        imageUrl = "https://img.gamedistribution.com/ded5788b27ca45c9b0934c2186de9749-512x384.jpeg";
-    } else if (game.title === "Arena Baby Tournament") {
-        imageUrl = "https://img.gamedistribution.com/18de67bea855444c9c571868cc405c1d-512x384.jpeg";
-    }
-    
+    console.log(`Setting modal image for ${game.title}: ${imageUrl}`);
     modalImg.src = imageUrl;
     modalImg.alt = game.title;
     
