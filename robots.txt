@@ -3,4 +3,3 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://utilix-games.pages.dev/sitemap.xml 

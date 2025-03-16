@@ -325,16 +325,7 @@ function getGameImageUrl(game) {
     if (game.image) {
         imageUrl = game.image;
     }
-    
-    // Special case for specific games to ensure they always have images
-    if (game.title === "Axe of the Ancients: Dwarven Fury") {
-        imageUrl = "https://img.gamedistribution.com/c3238ecc4c3f4550a8f9fc9599cbc189-512x384.jpeg";
-    } else if (game.title === "Revenge and Justice") {
-        imageUrl = "https://img.gamedistribution.com/ded5788b27ca45c9b0934c2186de9749-512x384.jpeg";
-    } else if (game.title === "Arena Baby Tournament") {
-        imageUrl = "https://img.gamedistribution.com/18de67bea855444c9c571868cc405c1d-512x384.jpeg";
-    }
-    
+
     // Add fallback for game URLs from gamedistribution.com that might have been missed
     if (imageUrl === 'img/placeholder.jpg' && game.url && game.url.includes('gamedistribution.com')) {
         // One more attempt to extract game ID from URL
