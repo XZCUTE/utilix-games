@@ -5,11 +5,7 @@ account_id = ""  # Your Cloudflare account ID will be inserted automatically
 workers_dev = true
 route = ""
 zone_id = ""
-compatibility_date = "2023-05-18"
-
-[site]
-bucket = "."  # The directory containing your static assets
-entry-point = "."  # Where your Worker script is located (if used)
+compatibility_date = "2025-03-16"
 
 [build]
 command = ""  # No build command needed for static site
@@ -17,6 +13,3 @@ upload.format = "directory"
 
 [env.production]
 # Production-specific variables go here
-
-[env.staging]
-# Staging-specific variables go here 
