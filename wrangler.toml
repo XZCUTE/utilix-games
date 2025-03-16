@@ -2,7 +2,6 @@
 name = "utilixgames"
 type = "webpack"
 account_id = ""  # Your Cloudflare account ID will be inserted automatically
-workers_dev = true
 route = ""
 zone_id = ""
 compatibility_date = "2025-03-16"
