@@ -104,16 +104,7 @@ function loadGameData(gameId) {
             gameData = game;
             updatePlayer(game);
         } else {
-            // Special case handling for specific games
-            if (decodedGameId === "Revenge and Justice" || gameId === "Revenge%20and%20Justice") {
-                console.log("Game not found in data, loading Revenge and Justice manually");
-                loadRevengeAndJustice();
-            } else if (decodedGameId === "Axe of the Ancients: Dwarven Fury" || gameId === "Axe%20of%20the%20Ancients%3A%20Dwarven%20Fury") {
-                console.log("Game not found in data, loading Axe of the Ancients manually");
-                loadAxeOfTheAncients();
-            } else {
-                throw new Error(`Game "${decodedGameId}" not found in any game files`);
-            }
+            throw new Error(`Game "${decodedGameId}" not found in any game files`);
         }
     })
     .catch(error => {
@@ -486,70 +477,6 @@ function showError(message) {
             });
         }
     }
-    
-    // Try to automatically load specific games if that was the game being loaded
-    const urlParams = new URLSearchParams(window.location.search);
-    const gameId = urlParams.get('id');
-    const decodedGameId = gameId ? decodeURIComponent(gameId) : '';
-    
-    if (decodedGameId === "Revenge and Justice" || gameId === "Revenge%20and%20Justice") {
-        console.log("Detected Revenge and Justice game in error handler, attempting automatic recovery");
-        loadRevengeAndJustice();
-    } else if (decodedGameId === "Axe of the Ancients: Dwarven Fury" || gameId === "Axe%20of%20the%20Ancients%3A%20Dwarven%20Fury") {
-        console.log("Detected Axe of the Ancients: Dwarven Fury game in error handler, attempting automatic recovery");
-        loadAxeOfTheAncients();
-    }
-}
-
-// Function to load Revenge and Justice game directly
-function loadRevengeAndJustice() {
-    const gameData = {
-        title: "Revenge and Justice",
-        description: "Revenge and Justice is a gripping tale of vengeance, survival, and redemption in a world ravaged by destruction. Step into the role of a lone survivor seeking justice against those who destroyed everything.",
-        url: "https://html5.gamedistribution.com/ded5788b27ca45c9b0934c2186de9749/?gd_sdk_referrer_url=https://gamedistribution.com/games/revenge-and-justice",
-        instructions: "Mouse - Shooting, WASD keys - Move, Spacebar - Jump, SHIFT - Run, R - Reload, Q - Roll, P - Pause",
-        categoryList: [
-            {name: "Action Games"},
-            {name: "Shooting Games"},
-            {name: "Adventure Games"}
-        ]
-    };
-    
-    // Fix the header title first
-    document.title = `${gameData.title} - Utilix Games`;
-    if (gameTitle) {
-        gameTitle.textContent = gameData.title;
-    }
-    
-    // Update the player with the manually loaded game data
-    updatePlayer(gameData);
-}
-
-// Function to load Axe of the Ancients: Dwarven Fury game directly
-function loadAxeOfTheAncients() {
-    const gameData = {
-        title: "Axe of the Ancients: Dwarven Fury",
-        description: "Axe of the Ancients: Dwarven Fury is an epic action hack-and-slash adventure, blending stunning visuals with classic gameplay inspired by Warcraft and Golden Axe. Step into the boots of Thorgar, a mighty dwarven warrior on a quest for revenge.",
-        url: "https://html5.gamedistribution.com/c3238ecc4c3f4550a8f9fc9599cbc189/?gd_sdk_referrer_url=https://gamedistribution.com/games/axe-of-the-ancients-dwarven-fury",
-        instructions: "Left mouse button - Attack, Right mouse button - Lock on enemy, WASD keys - Move, Spacebar - Jump, SHIFT - Run, E - Strong attack, Q - Roll, P - Pause",
-        categoryList: [
-            {name: "Action Games"},
-            {name: "3D Games"},
-            {name: "Adventure Games"},
-            {name: "Fighting Games"},
-            {name: "HTML5 games"},
-            {name: "WebGL Games"}
-        ]
-    };
-    
-    // Fix the header title first
-    document.title = `${gameData.title} - Utilix Games`;
-    if (gameTitle) {
-        gameTitle.textContent = gameData.title;
-    }
-    
-    // Update the player with the manually loaded game data
-    updatePlayer(gameData);
 }
 
 // Function to retry loading the game
