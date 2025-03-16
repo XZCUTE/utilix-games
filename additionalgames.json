@@ -1,0 +1,244 @@
+[
+  {
+    "game": {
+      "title": "Vortex 9",
+      "description": "Navigate through the spinning vortex in this challenging arcade game. Test your reflexes and timing as you avoid obstacles and collect power-ups.",
+      "url": "https://www.gameflare.com/embed/vortex-9/",
+      "instructions": "Use arrow keys or WASD to move. Avoid obstacles and survive as long as possible.",
+      "categoryList": [
+        {"name": "Action Games"},
+        {"name": "Arcade Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Fortzone Battle Royale",
+      "description": "Join the battle royale action in this fast-paced multiplayer survival game. Build, fight, and be the last one standing!",
+      "url": "https://www.gameflare.com/embed/fortzone-battle-royale/",
+      "instructions": "WASD to move, left click to shoot, right click to build, spacebar to jump.",
+      "categoryList": [
+        {"name": "Action Games"},
+        {"name": "Shooting Games"},
+        {"name": "Battle Royale"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Cubox IO",
+      "description": "Grow your cube by collecting smaller cubes and dominate the arena in this multiplayer IO game.",
+      "url": "https://www.gameflare.com/embed/cubox-io/",
+      "instructions": "Move your mouse to control your cube. Absorb smaller cubes to grow larger.",
+      "categoryList": [
+        {"name": "IO Games"},
+        {"name": "Multiplayer Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "The Island Survival",
+      "description": "Stranded on a mysterious island, you must gather resources, craft tools, and build shelter to survive.",
+      "url": "https://www.gameflare.com/embed/the-island-survival/",
+      "instructions": "WASD to move, E to interact, left click to attack/break, right click to place/build.",
+      "categoryList": [
+        {"name": "Adventure Games"},
+        {"name": "Survival Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Monster Master",
+      "description": "Capture, train and evolve monsters to build the ultimate team in this monster-collecting RPG adventure.",
+      "url": "https://www.gameflare.com/embed/monster-master/",
+      "instructions": "Use arrow keys to move, Z to interact, X to open menu. Follow in-game tutorials for more advanced controls.",
+      "categoryList": [
+        {"name": "RPG Games"},
+        {"name": "Adventure Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Rayman Incrediballs Dodge",
+      "description": "Help Rayman dodge obstacles and collect Incrediballs in this exciting endless runner game.",
+      "url": "https://www.gameflare.com/embed/rayman-s-incrediballs-dodge/",
+      "instructions": "Use arrow keys or swipe to move between lanes. Jump over obstacles and collect power-ups.",
+      "categoryList": [
+        {"name": "Action Games"},
+        {"name": "Platform Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Nugget Royale IO",
+      "description": "Battle other players in this fast-paced multiplayer arena. Collect nuggets, upgrade your character, and be the last one standing!",
+      "url": "https://www.gameflare.com/embed/nugget-royaleio/",
+      "instructions": "WASD to move, left click to shoot. Collect nuggets to upgrade your character.",
+      "categoryList": [
+        {"name": "Action Games"},
+        {"name": "IO Games"},
+        {"name": "Battle Royale"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Squid Game Multiplayer",
+      "description": "Compete in deadly challenges inspired by the hit TV show. Can you survive all the games and claim the prize?",
+      "url": "https://www.gameflare.com/embed/squid-game-multiplayer/",
+      "instructions": "Controls vary by mini-game. Follow on-screen instructions to survive each challenge.",
+      "categoryList": [
+        {"name": "Action Games"},
+        {"name": "Multiplayer Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Obby Hide and Seek Battle Royale",
+      "description": "Hide from seekers or hunt down hiders in this exciting multiplayer obstacle course game.",
+      "url": "https://www.gameflare.com/embed/obby-hide-and-seek-battle-royale/",
+      "instructions": "WASD to move, spacebar to jump. Hide from seekers or find hiders depending on your role.",
+      "categoryList": [
+        {"name": "Platform Games"},
+        {"name": "Multiplayer Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Obby Pull a Sword",
+      "description": "Navigate challenging obstacle courses to pull legendary swords and unlock new powers and abilities.",
+      "url": "https://www.gameflare.com/embed/obby-pull-a-sword/",
+      "instructions": "WASD to move, spacebar to jump. Reach the sword at the end of each level.",
+      "categoryList": [
+        {"name": "Platform Games"},
+        {"name": "Adventure Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Path of Survivor",
+      "description": "Survive waves of enemies in this top-down action game. Upgrade your abilities and see how long you can last.",
+      "url": "https://www.gameflare.com/embed/path-of-survivor/",
+      "instructions": "WASD or arrow keys to move. Automatically attack nearby enemies. Collect XP to level up and choose upgrades.",
+      "categoryList": [
+        {"name": "Action Games"},
+        {"name": "Survival Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Horror Farm Pumpkinhead",
+      "description": "Explore a creepy farm at night in this first-person horror game. Collect items and uncover the mystery of Pumpkinhead.",
+      "url": "https://www.gameflare.com/embed/horror-farm-pumpkinhead/",
+      "instructions": "WASD to move, shift to run, left click to interact. Find key items to progress and avoid the creature.",
+      "categoryList": [
+        {"name": "Horror Games"},
+        {"name": "Adventure Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Sigma Boy",
+      "description": "Embark on an epic journey as the legendary Sigma Boy. Run, jump, and fight through challenging levels in this action platformer.",
+      "url": "https://www.gameflare.com/embed/sigma-boy/",
+      "instructions": "Arrow keys to move, Z to jump, X to attack. Collect power-ups to enhance your abilities.",
+      "categoryList": [
+        {"name": "Action Games"},
+        {"name": "Platform Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Nightclub Security Guard",
+      "description": "Take on the role of a nightclub security guard and maintain order. Check IDs, break up fights, and keep the club running smoothly.",
+      "url": "https://www.gameflare.com/embed/nightclub-security-guard/",
+      "instructions": "Click on characters to interact. Follow on-screen prompts to check IDs and handle situations.",
+      "categoryList": [
+        {"name": "Simulation Games"},
+        {"name": "Strategy Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Brawl Stars Battle Starr",
+      "description": "Fight in fast-paced 3v3 battles with a variety of colorful characters, each with unique abilities.",
+      "url": "https://www.gameflare.com/embed/brawl-stars-battle-starr/",
+      "instructions": "Touch to move, drag to aim and shoot. Use your special ability when charged.",
+      "categoryList": [
+        {"name": "Action Games"},
+        {"name": "Multiplayer Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Wizard Masters",
+      "description": "Master the arcane arts in this magical action game. Cast spells, defeat enemies, and become the ultimate wizard.",
+      "url": "https://www.gameflare.com/embed/wizard-masters/",
+      "instructions": "WASD to move, left click to cast basic spell, 1-4 keys for special spells. Defeat enemies to level up.",
+      "categoryList": [
+        {"name": "Action Games"},
+        {"name": "RPG Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Roblox Squid Game Tower",
+      "description": "Climb the dangerous tower and complete challenges inspired by the popular Squid Game series.",
+      "url": "https://www.gameflare.com/embed/roblox-squid-game-tower/",
+      "instructions": "WASD to move, spacebar to jump. Complete each floor challenge to advance.",
+      "categoryList": [
+        {"name": "Platform Games"},
+        {"name": "Adventure Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Traffic Jam 3D",
+      "description": "Solve puzzling traffic scenarios by moving cars and clearing the way in this brain-teasing puzzle game.",
+      "url": "https://www.gameflare.com/embed/traffic-jam-3d/",
+      "instructions": "Click and drag cars to move them. Clear the path for the red car to exit.",
+      "categoryList": [
+        {"name": "Puzzle Games"},
+        {"name": "Strategy Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Squid Game 2 Mini Games",
+      "description": "Test your skills in a series of mini-games inspired by the second season of the hit show.",
+      "url": "https://www.gameflare.com/embed/squid-game-2-mini-games/",
+      "instructions": "Controls vary by mini-game. Follow on-screen instructions for each challenge.",
+      "categoryList": [
+        {"name": "Action Games"},
+        {"name": "Adventure Games"}
+      ]
+    }
+  },
+  {
+    "game": {
+      "title": "Hungry Shark Arena Horror Night",
+      "description": "Control a ferocious shark in this spooky underwater adventure. Eat everything in your path and grow larger in this horror-themed shark game.",
+      "url": "https://www.gameflare.com/embed/hungry-shark-arena-horror-night/",
+      "instructions": "Use arrow keys or WASD to swim. Eat smaller creatures to grow and avoid larger predators.",
+      "categoryList": [
+        {"name": "Action Games"},
+        {"name": "Horror Games"}
+      ]
+    }
+  }
+]

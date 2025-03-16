@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilix Games - YouTube Purple Theme</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/utilix-theme.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="public/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="loader-container">
+        <div class="loader"></div>
+    </div>
+
+    <nav class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <i class="fas fa-gamepad"></i> Utilix Games
+            </div>
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <input type="text" id="game-search" placeholder="Search games...">
+                    <button id="search-btn" aria-label="Search games"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="active filter-btn" data-filter="all">All Games</a>
+                <a href="#" class="filter-btn" data-filter="Action Games">Action</a>
+                <a href="#" class="filter-btn" data-filter="Puzzle Games">Puzzle</a>
+                <a href="#" class="filter-btn" data-filter="Adventure Games">Adventure</a>
+                <a href="#" class="filter-btn" data-filter="RPG Games">RPG</a>
+                <a href="#" class="filter-btn" data-filter="Horror Games">Horror</a>
+                <a href="#" class="filter-btn" data-filter="Multiplayer Games">Multiplayer</a>
+                <a href="#new-games" class="special-btn"><i class="fas fa-star"></i> Special</a>
+            </div>
+            <div class="menu-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Discover Amazing Games</h1>
+                <p>Explore our collection of exciting games for all ages</p>
+                <div class="hero-buttons">
+                    <a href="#games" class="btn">Explore Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="games" class="games-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Featured Games</h2>
+            </div>
+            <div class="games-grid" id="games-container">
+                <!-- Games will be loaded here dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <section id="new-games" class="games-section new-games-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Newly Added Games</h2>
+                <p>Check out our latest additions to the collection</p>
+            </div>
+            <div class="games-grid" id="new-games-container">
+                <!-- New games will be loaded here dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <div class="modal" id="game-modal">
+        <div class="modal-content">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <img src="" alt="Game Image" id="modal-game-image" class="modal-img">
+            <div class="modal-content-wrapper">
+                <h2 id="modal-game-title" class="modal-title"></h2>
+                <div id="modal-game-categories" class="modal-category"></div>
+                <div id="modal-game-description" class="modal-description"></div>
+                <div class="game-instructions">
+                    <h3>How to Play:</h3>
+                    <p id="modal-game-instructions"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="player.html" class="btn modal-play-btn" id="modal-play-btn">Play Now</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <i class="fas fa-gamepad"></i> Utilix Games
+                    </div>
+                    <p class="footer-description">Part of the Utilix platform</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3 class="footer-title">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#games">Games</a></li>
+                        <li><a href="#new-games" class="special-footer-link"><i class="fas fa-star"></i> Special Games</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3 class="footer-title">Categories</h3>
+                    <ul class="footer-links">
+                        <li><a href="#" class="footer-filter" data-filter="Action Games">Action</a></li>
+                        <li><a href="#" class="footer-filter" data-filter="Puzzle Games">Puzzle</a></li>
+                        <li><a href="#" class="footer-filter" data-filter="Adventure Games">Adventure</a></li>
+                        <li><a href="#" class="footer-filter" data-filter="RPG Games">RPG</a></li>
+                        <li><a href="#" class="footer-filter" data-filter="Horror Games">Horror</a></li>
+                        <li><a href="#" class="footer-filter" data-filter="Multiplayer Games">Multiplayer</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="copyright">
+                &copy; 2023 Utilix Games. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+</body>
+</html> 
