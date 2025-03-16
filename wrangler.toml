@@ -1,6 +1,5 @@
 # Wrangler configuration for Cloudflare Pages
 name = "utilixgames"
-type = "webpack"
 account_id = ""  # Your Cloudflare account ID will be inserted automatically
 route = ""
 zone_id = ""
