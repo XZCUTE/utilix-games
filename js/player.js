@@ -1,12 +1,13 @@
 // Global variables
 let gameData = null;
+let gameContainer = null;
+let gameCanvas = null;
 let isTheaterMode = false;
 let isFullscreen = false;
 const gamesJsonUrl = 'distributiongames.json';
 
 // DOM Elements
 const gameTitle = document.getElementById('game-title');
-const gameCanvas = document.getElementById('game-canvas');
 const gameFrameContainer = document.getElementById('game-frame-container');
 const loadingIndicator = document.getElementById('loading-indicator');
 const playerContainer = document.getElementById('player-container');
@@ -60,220 +61,164 @@ document.addEventListener('MSFullscreenChange', handleFullscreenChange);
 document.addEventListener('keydown', handleKeyPress);
 
 // Functions
-function initPlayer() {
+async function initPlayer() {
+    // Get DOM elements
+    gameContainer = document.getElementById('game-container');
+    gameCanvas = document.getElementById('game-canvas');
+    
+    // Get game ID from URL
     const urlParams = new URLSearchParams(window.location.search);
     const gameId = urlParams.get('id');
     
     if (!gameId) {
-        showError('Game ID is missing. Please go back and select a game.');
+        showError('No game ID specified');
         return;
     }
+    
+    // Show loading status
+    document.getElementById('game-title').textContent = `Loading: ${gameId}...`;
+    
+    try {
+        // Load game data
+        gameData = await loadGameData(gameId);
+        
+        // Update player with game data
+        updatePlayer(gameData);
+    } catch (error) {
+        console.error('Error initializing player:', error);
+    }
+    
+    // Add event listeners
+    document.getElementById('back-btn').addEventListener('click', goBack);
+    document.getElementById('fullscreen-btn').addEventListener('click', toggleFullscreen);
+    
+    // Add ESC key handler for exiting fullscreen
+    document.addEventListener('keydown', handleKeyPress);
     
     // Hide loader after 1.5 seconds for better UX
     setTimeout(() => {
         document.querySelector('.loader-container').style.display = 'none';
     }, 1500);
-    
-    loadGameData(gameId);
 }
 
-function loadGameData(gameId) {
-    // Decode the gameId from the URL
-    const decodedGameId = decodeURIComponent(gameId);
-    
-    // Show loading status
-    document.getElementById('game-title').textContent = `Loading: ${decodedGameId}...`;
-    
-    // First try to load from distributiongames.json
-    loadGameFromFile(decodedGameId, gameId, 'distributiongames.json')
-        .then(game => {
-            if (game) {
-                gameData = game;
-                updatePlayer(game);
-            } else {
-                // If not found, try to load from additionalgames.json
-                return loadGameFromFile(decodedGameId, gameId, 'additionalgames.json');
-            }
-        })
-        .then(game => {
-            if (game) {
-                gameData = game;
-                updatePlayer(game);
-            } else {
-                throw new Error(`Game "${decodedGameId}" not found in any game files`);
-            }
-        })
-        .catch(error => {
-            console.error('Error loading game data:', error);
-            showError(`Failed to load game data: ${error.message}`);
-        });
-}
-
-function loadGameFromFile(decodedGameId, encodedGameId, fileName) {
-    return fetch(fileName)
-        .then(response => {
-            if (!response.ok) {
-                console.warn(`Error loading from ${fileName}: ${response.status}`);
-                return null; // Return null to indicate file not found or error
-            }
-            return response.text();
-        })
-        .then(text => {
-            if (!text) return null;
-            
-            let data;
+// Load game data from JSON files
+async function loadGameData(gameId) {
+    try {
+        // Try to load from main games file first
+        const mainGamesResponse = await fetch('./distributiongames.json');
+        if (!mainGamesResponse.ok) {
+            throw new Error(`HTTP error! status: ${mainGamesResponse.status}`);
+        }
+        
+        const mainGamesText = await mainGamesResponse.text();
+        const mainGames = parseGamesData(mainGamesText);
+        
+        // Find the game in main games
+        let game = mainGames.find(g => g.title === gameId);
+        
+        // If not found in main games, try additional games
+        if (!game) {
             try {
-                // Try to parse as regular JSON first
-                data = JSON.parse(text);
-            } catch (error) {
-                console.warn(`Could not parse ${fileName} directly, trying alternative method`, error);
-                
-                // If the JSON is invalid or in an unusual format, try to extract the games
-                try {
-                    // Attempt to manually create the structure
-                    const processedText = `{"games":[${text}]}`;
-                    data = JSON.parse(processedText);
-                } catch (innerError) {
-                    console.error(`Failed to parse ${fileName} using alternative method`, innerError);
-                    return null;
+                const additionalGamesResponse = await fetch('./additionalgames.json');
+                if (additionalGamesResponse.ok) {
+                    const additionalGamesText = await additionalGamesResponse.text();
+                    const additionalGames = parseGamesData(additionalGamesText);
+                    game = additionalGames.find(g => g.title === gameId);
                 }
+            } catch (error) {
+                console.warn('Error loading additional games:', error);
             }
-            
-            // Extract games from the data structure
-            let games;
-            if (data && Array.isArray(data.games)) {
-                games = data.games.map(item => item.game || item);
-            } else if (data && Array.isArray(data)) {
-                games = data.map(item => item.game || item);
-            } else {
-                console.warn(`${fileName} format unexpected, attempting direct use`, data);
-                games = Array.isArray(data) ? data : [data];
-            }
-            
-            if (games.length === 0) {
-                return null;
-            }
-            
-            // Find game by title using case-insensitive comparison
-            const game = games.find(g => 
-                g.title && 
-                (g.title.toLowerCase() === decodedGameId.toLowerCase() || 
-                 encodeURIComponent(g.title) === encodedGameId)
-            );
-            
-            return game || null;
-        })
-        .catch(error => {
-            console.error(`Error processing ${fileName}:`, error);
-            return null;
-        });
+        }
+        
+        if (game) {
+            return game;
+        } else {
+            throw new Error(`Game "${gameId}" not found`);
+        }
+    } catch (error) {
+        console.error('Error loading game data:', error);
+        showError(`Failed to load game: ${error.message}`);
+        throw error;
+    }
+}
+
+function parseGamesData(text) {
+    let data;
+    try {
+        // Try to parse as regular JSON first
+        data = JSON.parse(text);
+    } catch (error) {
+        console.warn(`Could not parse directly, trying alternative method`, error);
+        
+        // If the JSON is invalid or in an unusual format, try to extract the games
+        try {
+            // Attempt to manually create the structure
+            const processedText = `{"games":[${text}]}`;
+            data = JSON.parse(processedText);
+        } catch (innerError) {
+            console.error(`Failed to parse using alternative method`, innerError);
+            return [];
+        }
+    }
+    
+    // Extract games from the data structure
+    let games;
+    if (data && Array.isArray(data.games)) {
+        games = data.games.map(item => item.game || item);
+    } else if (data && Array.isArray(data)) {
+        games = data.map(item => item.game || item);
+    } else {
+        console.warn(`format unexpected, attempting direct use`, data);
+        games = Array.isArray(data) ? data : [data];
+    }
+    
+    return games;
 }
 
 function updatePlayer(game) {
     // Update title
     document.title = `${game.title} - Utilix Games`;
-    gameTitle.textContent = game.title;
+    document.getElementById('game-title').textContent = game.title;
     
     // Update categories
-    if (game.categoryList && game.categoryList.length > 0) {
-        gameCategories.innerHTML = '';
-        game.categoryList.forEach(category => {
-            const categorySpan = document.createElement('span');
-            categorySpan.className = 'category';
-            categorySpan.textContent = category.name;
-            gameCategories.appendChild(categorySpan);
-        });
-    } else {
-        gameCategories.innerHTML = '<span class="category">Miscellaneous</span>';
+    if (gameCategories) {
+        if (game.categoryList && game.categoryList.length > 0) {
+            gameCategories.innerHTML = '';
+            game.categoryList.forEach(category => {
+                const categorySpan = document.createElement('span');
+                categorySpan.className = 'category';
+                categorySpan.textContent = category.name;
+                gameCategories.appendChild(categorySpan);
+            });
+        } else {
+            gameCategories.innerHTML = '<span class="category">Miscellaneous</span>';
+        }
     }
     
     // Update description
-    if (game.description) {
-        gameDescription.innerHTML = `<p>${game.description}</p>`;
-    } else {
-        gameDescription.innerHTML = '<p>No description available for this game.</p>';
+    if (gameDescription) {
+        if (game.description) {
+            gameDescription.innerHTML = `<p>${game.description}</p>`;
+        } else {
+            gameDescription.innerHTML = '<p>No description available for this game.</p>';
+        }
     }
     
     // Update instructions
-    if (game.instructions) {
-        gameInstructions.innerHTML = `<p>${game.instructions}</p>`;
-    } else {
-        gameInstructions.innerHTML = '<p>No specific instructions provided. Use standard game controls.</p>';
+    if (gameInstructions) {
+        if (game.instructions) {
+            gameInstructions.innerHTML = `<p>${game.instructions}</p>`;
+        } else {
+            gameInstructions.innerHTML = '<p>No specific instructions provided. Use standard game controls.</p>';
+        }
     }
     
     // Setup share links
-    const shareUrl = window.location.href;
-    shareLinkInput.value = shareUrl;
-    modalShareLinkInput.value = shareUrl;
+    if (shareLinkInput) shareLinkInput.value = window.location.href;
+    if (modalShareLinkInput) modalShareLinkInput.value = window.location.href;
     
-    // Load game in canvas or iframe
+    // Load game in iframe
     loadGame(game);
-}
-
-function loadGame(game) {
-    // Hide loading indicator when game is loaded
-    setTimeout(() => {
-        loadingIndicator.style.display = 'none';
-    }, 1500);
-    
-    // Clear previous content
-    gameFrameContainer.innerHTML = '';
-    
-    if (game.url) {
-        // If game has a direct URL, create an iframe
-        const iframe = document.createElement('iframe');
-        iframe.src = game.url;
-        iframe.allowFullscreen = true;
-        iframe.allow = 'autoplay; fullscreen';
-        iframe.style.width = '100%';
-        iframe.style.height = '100%';
-        iframe.style.border = 'none';
-        
-        // Add iframe to container
-        gameFrameContainer.appendChild(iframe);
-        
-        // Start loading game
-        iframe.addEventListener('load', () => {
-            loadingIndicator.style.display = 'none';
-        });
-        
-        iframe.addEventListener('error', () => {
-            showError('Failed to load the game. Please try again later.');
-        });
-    } else if (game.assetList && game.assetList.length > 0) {
-        // For canvas games, we would initialize the canvas here
-        initCanvas(game);
-    } else {
-        showError('This game does not have valid content to display.');
-    }
-}
-
-function initCanvas(game) {
-    // Canvas initialization would depend on the specific game
-    // This is a placeholder function that would be customized per game
-    const ctx = gameCanvas.getContext('2d');
-    
-    // Set canvas dimensions
-    gameCanvas.width = gameFrameContainer.clientWidth;
-    gameCanvas.height = gameFrameContainer.clientHeight;
-    
-    // Example: Draw a placeholder
-    ctx.fillStyle = '#0e0e10';
-    ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
-    
-    ctx.font = '24px var(--font-primary)';
-    ctx.fillStyle = '#efeff1';
-    ctx.textAlign = 'center';
-    ctx.fillText(game.title, gameCanvas.width / 2, gameCanvas.height / 2 - 15);
-    
-    ctx.font = '16px var(--font-primary)';
-    ctx.fillStyle = '#9147ff';
-    ctx.fillText('Game is loading...', gameCanvas.width / 2, gameCanvas.height / 2 + 15);
-    
-    // After canvas is initialized, hide loading
-    setTimeout(() => {
-        loadingIndicator.style.display = 'none';
-    }, 1000);
 }
 
 function toggleTheaterMode() {
@@ -462,4 +407,78 @@ window.addEventListener('resize', function() {
         gameCanvas.width = gameFrameContainer.clientWidth;
         gameCanvas.height = gameFrameContainer.clientHeight;
     }
-}); 
+});
+
+// Load the game in an iframe
+function loadGame(game) {
+    // Get loading indicator
+    const loadingIndicator = document.getElementById('loading-indicator');
+    
+    // Hide loading indicator when game is loaded
+    setTimeout(() => {
+        if (loadingIndicator) loadingIndicator.style.display = 'none';
+    }, 1500);
+    
+    // Clear previous content
+    gameContainer.innerHTML = '';
+    
+    if (game.url) {
+        // If game has a direct URL, create an iframe
+        const iframe = document.createElement('iframe');
+        iframe.src = game.url;
+        iframe.allowFullscreen = true;
+        iframe.allow = 'autoplay; fullscreen';
+        iframe.style.width = '100%';
+        iframe.style.height = '100%';
+        iframe.style.border = 'none';
+        
+        // Add iframe to container
+        gameContainer.appendChild(iframe);
+        
+        // Start loading game
+        iframe.addEventListener('load', () => {
+            if (loadingIndicator) loadingIndicator.style.display = 'none';
+        });
+        
+        iframe.addEventListener('error', () => {
+            showError('Failed to load the game. Please try again later.');
+        });
+    } else if (game.assetList && game.assetList.length > 0) {
+        // If the game has assets, use those
+        const gameAsset = game.assetList.find(asset => asset.type === 'game' || asset.type === 'main');
+        
+        if (gameAsset && gameAsset.url) {
+            // If the asset has a URL, use an iframe
+            const iframe = document.createElement('iframe');
+            iframe.src = gameAsset.url;
+            iframe.allowFullscreen = true;
+            iframe.allow = 'autoplay; fullscreen';
+            iframe.style.width = '100%';
+            iframe.style.height = '100%';
+            iframe.style.border = 'none';
+            
+            // Add iframe to container
+            gameContainer.appendChild(iframe);
+            
+            // Start loading game
+            iframe.addEventListener('load', () => {
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+            });
+            
+            iframe.addEventListener('error', () => {
+                showError('Failed to load the game. Please try again later.');
+            });
+        } else {
+            // Otherwise, show an error
+            showError('Game assets not found or not supported');
+        }
+    } else {
+        // If no URL or assets, show an error
+        showError('Game source not found');
+    }
+}
+
+// Go back to the games list
+function goBack() {
+    window.location.href = 'index.html';
+} 

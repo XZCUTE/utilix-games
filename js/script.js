@@ -143,7 +143,7 @@ async function loadGamesData() {
         isLoading = true;
         
         // Load main games data
-        const mainGamesPromise = fetch('distributiongames.json')
+        const mainGamesPromise = fetch('./distributiongames.json')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -153,7 +153,7 @@ async function loadGamesData() {
             .then(text => parseGamesData(text, 'main games'));
         
         // Load additional games data
-        const additionalGamesPromise = fetch('additionalgames.json')
+        const additionalGamesPromise = fetch('./additionalgames.json')
             .then(response => {
                 if (!response.ok) {
                     console.warn('Additional games file not found or error fetching');
@@ -296,9 +296,20 @@ function createGameCard(game) {
     card.className = 'game-card';
     
     // Get the first image from assetList if available
-    const imageUrl = game.assetList && game.assetList.length > 0
-        ? game.assetList[0].name
-        : 'https://via.placeholder.com/400x300?text=No+Image';
+    let imageUrl = 'https://via.placeholder.com/400x300?text=No+Image';
+    
+    if (game.assetList && game.assetList.length > 0) {
+        // Check if the asset has a full URL or just a relative path
+        const asset = game.assetList[0];
+        if (asset.url) {
+            imageUrl = asset.url;
+        } else if (asset.name) {
+            // If it's a relative path, make sure it starts with ./
+            imageUrl = asset.name.startsWith('./') || asset.name.startsWith('/') || asset.name.startsWith('http') 
+                ? asset.name 
+                : './' + asset.name;
+        }
+    }
     
     // Get up to 3 categories
     const categories = game.categoryList 
@@ -311,7 +322,7 @@ function createGameCard(game) {
         : 'No description available';
     
     card.innerHTML = `
-        <img src="${imageUrl}" alt="${game.title}" class="game-img">
+        <img src="${imageUrl}" alt="${game.title}" class="game-img" onerror="this.src='./img/placeholder.jpg'">
         <div class="game-info">
             <h3 class="game-title">${game.title}</h3>
             <div class="game-category">${categories}</div>
@@ -335,7 +346,7 @@ function openGameModal(game) {
     
     // Update image
     const modalImg = document.getElementById('modal-game-image');
-    let imageUrl = 'img/placeholder.jpg';
+    let imageUrl = './img/placeholder.jpg';
     
     if (game.assetList && game.assetList.length > 0) {
         const assetList = Array.isArray(game.assetList) ? game.assetList : [game.assetList];
@@ -345,12 +356,34 @@ function openGameModal(game) {
         );
         
         if (thumbnails.length > 0) {
-            imageUrl = thumbnails[0].url;
+            const thumbnail = thumbnails[0];
+            if (thumbnail.url) {
+                imageUrl = thumbnail.url;
+            } else if (thumbnail.name) {
+                // If it's a relative path, make sure it starts with ./
+                imageUrl = thumbnail.name.startsWith('./') || thumbnail.name.startsWith('/') || thumbnail.name.startsWith('http') 
+                    ? thumbnail.name 
+                    : './' + thumbnail.name;
+            }
+        } else if (assetList.length > 0) {
+            // If no thumbnail, use the first asset
+            const asset = assetList[0];
+            if (asset.url) {
+                imageUrl = asset.url;
+            } else if (asset.name) {
+                // If it's a relative path, make sure it starts with ./
+                imageUrl = asset.name.startsWith('./') || asset.name.startsWith('/') || asset.name.startsWith('http') 
+                    ? asset.name 
+                    : './' + asset.name;
+            }
         }
     }
     
     modalImg.src = imageUrl;
     modalImg.alt = game.title;
+    modalImg.onerror = function() {
+        this.src = './img/placeholder.jpg';
+    };
     
     // Update categories
     const categoriesContainer = document.getElementById('modal-game-categories');
