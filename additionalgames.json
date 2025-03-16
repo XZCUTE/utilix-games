@@ -1,6 +1,19 @@
 [
   {
     "game": {
+      "title": "Revenge and Justice",
+      "description": "Revenge and Justice is a gripping tale of vengeance, survival, and redemption in a world ravaged by destruction. Step into the role of a lone survivor seeking justice against those who destroyed everything.",
+      "url": "https://html5.gamedistribution.com/ded5788b27ca45c9b0934c2186de9749/?gd_sdk_referrer_url=https://gamedistribution.com/games/revenge-and-justice",
+      "instructions": "Mouse - Shooting, WASD keys - Move, Spacebar - Jump, SHIFT - Run, R - Reload, Q - Roll, P - Pause",
+      "categoryList": [
+        {"name": "Action Games"},
+        {"name": "Shooting Games"},
+        {"name": "Adventure Games"}
+      ]
+    }
+  },
+  {
+    "game": {
       "title": "Vortex 9",
       "description": "Navigate through the spinning vortex in this challenging arcade game. Test your reflexes and timing as you avoid obstacles and collect power-ups.",
       "url": "https://www.gameflare.com/embed/vortex-9/",
