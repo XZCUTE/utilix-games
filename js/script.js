@@ -333,7 +333,10 @@ function openGameModal(game) {
     } else if (game.title === "Arena Baby Tournament") {
         console.log("Using hardcoded image for Arena Baby Tournament");
         imageUrl = "https://img.gamedistribution.com/18de67bea855444c9c571868cc405c1d-512x384.jpeg";
-    } 
+    } else if (game.title === "Two Hands of Satan") {
+        console.log("Using hardcoded image for Two Hands of Satan");
+        imageUrl = "https://img.gamedistribution.com/f804d079d19d413b9871274d4ed72e4c-512x384.jpeg";
+    }
     // Only check assetList if we didn't already set a hardcoded image
     else if (game.assetList && game.assetList.length > 0) {
         const assetList = Array.isArray(game.assetList) ? game.assetList : [game.assetList];

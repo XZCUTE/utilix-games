@@ -86,6 +86,13 @@ function loadGameData(gameId) {
     
     console.log(`Attempting to load game: "${decodedGameId}" (${gameId})`);
     
+    // Special case for Two Hands of Satan - handle this first
+    if (decodedGameId === "Two Hands of Satan" || gameId === "Two%20Hands%20of%20Satan") {
+        console.log("Game matched Two Hands of Satan, loading manually");
+        loadTwoHandsOfSatan();
+        return;
+    }
+    
     // Try to load games directly first
     Promise.all([
         fetchAndParseGameFile('distributiongames.json'),
@@ -111,6 +118,9 @@ function loadGameData(gameId) {
             } else if (decodedGameId === "Axe of the Ancients: Dwarven Fury" || gameId === "Axe%20of%20the%20Ancients%3A%20Dwarven%20Fury") {
                 console.log("Game not found in data, loading Axe of the Ancients manually");
                 loadAxeOfTheAncients();
+            } else if (decodedGameId === "Two Hands of Satan" || gameId === "Two%20Hands%20of%20Satan") {
+                console.log("Game not found in data, loading Two Hands of Satan manually");
+                loadTwoHandsOfSatan();
             } else {
                 throw new Error(`Game "${decodedGameId}" not found in any game files`);
             }
@@ -174,11 +184,14 @@ function fetchAndParseGameFile(fileName) {
 function findGameByTitle(games, decodedGameId, encodedGameId) {
     if (!games || games.length === 0) return null;
     
-    // First try exact match
+    // First try exact match with proper decoding of both sides
     let game = games.find(g => 
         g && g.title && (
             g.title === decodedGameId || 
-            encodeURIComponent(g.title) === encodedGameId
+            encodeURIComponent(g.title) === encodedGameId ||
+            // Additional matching attempts for better detection
+            decodeURIComponent(g.title) === decodedGameId ||
+            g.title === decodeURIComponent(encodedGameId)
         )
     );
     
@@ -570,4 +583,31 @@ window.addEventListener('resize', function() {
         gameCanvas.width = gameFrameContainer.clientWidth;
         gameCanvas.height = gameFrameContainer.clientHeight;
     }
-}); 
+});
+
+// Add a function to handle "Two Hands of Satan" game specifically
+function loadTwoHandsOfSatan() {
+    const game = {
+        title: "Two Hands of Satan",
+        description: "Two Hands of Satan is a thrilling multiplayer first-person shooter that plunges players into intense, chaotic battles. This free-to-play game is designed to captivate with fast-paced, competitive gameplay, setting it apart in the shooter genre.",
+        url: "https://html5.gamedistribution.com/f804d079d19d413b9871274d4ed72e4c/?gd_sdk_referrer_url=https://gamedistribution.com/games/two-hands-of-satan",
+        instructions: "Mouse - Shooting, WASD keys - Movement, Spacebar - Jump, SHIFT - Sprint, 1 || 4 - Change weapon, H - Medkit, T - Chat, C - Crouch, TAB - Score, ESC - Pause",
+        categoryList: [
+            {name: "Action Games"},
+            {name: "3D Games"},
+            {name: "Multiplayer Games"},
+            {name: "Shooting Games"},
+            {name: "HTML5 games"},
+            {name: "WebGL Games"}
+        ]
+    };
+    
+    console.log("Manually loading Two Hands of Satan game");
+    gameData = game;
+    updatePlayer(game);
+    
+    // Set the title and header after updating the player
+    document.title = `Playing: ${game.title} | Utilix Games`;
+    const gameTitle = document.getElementById('game-title');
+    if (gameTitle) gameTitle.textContent = game.title;
+} 

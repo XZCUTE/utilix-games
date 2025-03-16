@@ -1,6 +1,22 @@
 [
   {
     "game": {
+      "title": "Two Hands of Satan",
+      "description": "Two Hands of Satan is a thrilling multiplayer first-person shooter that plunges players into intense, chaotic battles. This free-to-play game is designed to captivate with fast-paced, competitive gameplay, setting it apart in the shooter genre.",
+      "url": "https://html5.gamedistribution.com/f804d079d19d413b9871274d4ed72e4c/?gd_sdk_referrer_url=https://gamedistribution.com/games/two-hands-of-satan",
+      "instructions": "Mouse - Shooting, WASD keys - Movement, Spacebar - Jump, SHIFT - Sprint, 1 || 4 - Change weapon, H - Medkit, T - Chat, C - Crouch, TAB - Score, ESC - Pause",
+      "categoryList": [
+        {"name": "Action Games"},
+        {"name": "3D Games"},
+        {"name": "Multiplayer Games"},
+        {"name": "Shooting Games"},
+        {"name": "HTML5 games"},
+        {"name": "WebGL Games"}
+      ]
+    }
+  },
+  {
+    "game": {
       "title": "Axe of the Ancients: Dwarven Fury",
       "description": "Axe of the Ancients: Dwarven Fury is an epic action hack-and-slash adventure, blending stunning visuals with classic gameplay inspired by Warcraft and Golden Axe. Step into the boots of Thorgar, a mighty dwarven warrior on a quest for revenge.",
       "url": "https://html5.gamedistribution.com/c3238ecc4c3f4550a8f9fc9599cbc189/?gd_sdk_referrer_url=https://gamedistribution.com/games/axe-of-the-ancients-dwarven-fury",
