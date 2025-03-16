@@ -142,40 +142,18 @@ async function loadGamesData() {
         // Show loading status
         isLoading = true;
         
-        // Load main games data
-        const mainGamesPromise = fetch('distributiongames.json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.text();
-            })
-            .then(text => parseGamesData(text, 'main games'));
-        
-        // Load additional games data
-        const additionalGamesPromise = fetch('additionalgames.json')
-            .then(response => {
-                if (!response.ok) {
-                    console.warn('Additional games file not found or error fetching');
-                    return []; // Return empty array if additional games file is not found
-                }
-                return response.text();
-            })
-            .then(text => parseGamesData(text, 'additional games'))
-            .catch(error => {
-                console.warn('Error loading additional games:', error);
-                return []; // Return empty array on error
-            });
-        
-        // Wait for both promises to resolve
-        const [mainGames, addGames] = await Promise.all([mainGamesPromise, additionalGamesPromise]);
+        // Load and parse both game files
+        const [distributionGamesData, additionalGamesData] = await Promise.all([
+            fetchAndParseGames('distributiongames.json'),
+            fetchAndParseGames('additionalgames.json')
+        ]);
         
         // Store additional games separately
-        additionalGames = [...addGames];
+        additionalGames = Array.isArray(additionalGamesData) ? additionalGamesData : [];
         
         // Combine games from both sources for the main display
-        gamesData = [...mainGames, ...addGames];
-        console.log('Total games loaded:', gamesData.length, '(Main:', mainGames.length, ', Additional:', additionalGames.length, ')');
+        gamesData = [...(distributionGamesData || []), ...(additionalGames || [])];
+        console.log('Total games loaded:', gamesData.length, '(Main:', distributionGamesData?.length || 0, ', Additional:', additionalGames.length, ')');
         
         // Set filtered games to all games initially
         filteredGames = [...gamesData];
@@ -188,45 +166,51 @@ async function loadGamesData() {
     }
 }
 
-// Helper function to parse games data from JSON text
-function parseGamesData(text, source = 'unknown') {
-    let data;
-    
+// Helper function to fetch and parse a game file
+async function fetchAndParseGames(fileName) {
     try {
-        // Try to parse as regular JSON first
-        data = JSON.parse(text);
-    } catch (error) {
-        console.warn(`Could not parse ${source} JSON directly, trying alternative method`, error);
-        
-        // If the JSON is invalid or in an unusual format, try to extract the games
-        try {
-            // The file appears to have a non-standard format based on the sample
-            // Attempt to manually create the structure
-            const processedText = `{"games":[${text}]}`;
-            data = JSON.parse(processedText);
-        } catch (innerError) {
-            console.error(`Failed to parse ${source} JSON using alternative method`, innerError);
-            throw new Error(`Unable to parse ${source} game data`);
+        const response = await fetch(fileName);
+        if (!response.ok) {
+            console.warn(`Error loading from ${fileName}: ${response.status}`);
+            return [];
         }
+        
+        const text = await response.text();
+        if (!text.trim()) {
+            console.warn(`Empty file: ${fileName}`);
+            return [];
+        }
+        
+        // Parse the JSON
+        const data = JSON.parse(text);
+        console.log(`Successfully parsed ${fileName}`);
+        
+        // Extract games based on the structure
+        let games = [];
+        
+        if (Array.isArray(data)) {
+            // Format: [{game: {...}}, {game: {...}}]
+            games = data.map(item => {
+                // Handle both formats: {game: {...}} and directly {...}
+                return item.game || item;
+            });
+        } else if (data && data.games && Array.isArray(data.games)) {
+            // Format: {games: [{...}, {...}]}
+            games = data.games.map(item => item.game || item);
+        } else if (data && typeof data === 'object') {
+            // Single game object
+            games = [data.game || data];
+        }
+        
+        // Ensure each game has a valid URL for iframe embedding
+        games = games.filter(game => game && (game.url || (game.assetList && game.assetList.length > 0)));
+        
+        console.log(`Extracted ${games.length} games from ${fileName}`);
+        return games;
+    } catch (error) {
+        console.error(`Error processing ${fileName}:`, error);
+        return [];
     }
-    
-    // Extract games from the data structure
-    let games;
-    if (data && Array.isArray(data.games)) {
-        games = data.games.map(item => item.game || item);
-    } else if (data && Array.isArray(data)) {
-        // If it's already an array, map it directly
-        games = data.map(item => item.game || item);
-    } else {
-        console.warn(`${source} data format unexpected, attempting direct use`, data);
-        games = Array.isArray(data) ? data : [data];
-    }
-    
-    // Ensure each game has a valid URL for iframe embedding
-    games = games.filter(game => game && (game.url || (game.assetList && game.assetList.length > 0)));
-    
-    console.log(`${source} games loaded:`, games.length);
-    return games;
 }
 
 // Set up the Intersection Observer for infinite scrolling

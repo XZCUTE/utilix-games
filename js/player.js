@@ -84,184 +84,115 @@ function loadGameData(gameId) {
     // Show loading status
     document.getElementById('game-title').textContent = `Loading: ${decodedGameId}...`;
     
-    // First try to load from distributiongames.json
-    loadGameFromFile(decodedGameId, gameId, 'distributiongames.json')
-        .then(game => {
-            if (game) {
-                gameData = game;
-                updatePlayer(game);
-            } else {
-                // If not found, try to load from additionalgames.json
-                return loadGameFromFile(decodedGameId, gameId, 'additionalgames.json');
-            }
-        })
-        .then(game => {
-            if (game) {
-                gameData = game;
-                updatePlayer(game);
+    console.log(`Attempting to load game: "${decodedGameId}" (${gameId})`);
+    
+    // Try to load games directly first
+    Promise.all([
+        fetchAndParseGameFile('distributiongames.json'),
+        fetchAndParseGameFile('additionalgames.json')
+    ])
+    .then(([distributionGames, additionalGames]) => {
+        // Combine all games into a single array
+        const allGames = [...(distributionGames || []), ...(additionalGames || [])];
+        console.log(`Total games found: ${allGames.length}`);
+        
+        // Try to find the game by title
+        let game = findGameByTitle(allGames, decodedGameId, gameId);
+        
+        if (game) {
+            console.log(`Found game: ${game.title}`);
+            gameData = game;
+            updatePlayer(game);
+        } else {
+            // Special case handling for specific games
+            if (decodedGameId === "Revenge and Justice" || gameId === "Revenge%20and%20Justice") {
+                console.log("Game not found in data, loading Revenge and Justice manually");
+                loadRevengeAndJustice();
+            } else if (decodedGameId === "Axe of the Ancients: Dwarven Fury" || gameId === "Axe%20of%20the%20Ancients%3A%20Dwarven%20Fury") {
+                console.log("Game not found in data, loading Axe of the Ancients manually");
+                loadAxeOfTheAncients();
             } else {
                 throw new Error(`Game "${decodedGameId}" not found in any game files`);
             }
-        })
-        .catch(error => {
-            console.error('Error loading game data:', error);
-            showError(`Failed to load game data: ${error.message}`);
-        });
+        }
+    })
+    .catch(error => {
+        console.error('Error loading game data:', error);
+        showError(`Failed to load game data: ${error.message}`);
+    });
 }
 
-function loadGameFromFile(decodedGameId, encodedGameId, fileName) {
+// Helper function to fetch and parse a game file
+function fetchAndParseGameFile(fileName) {
     return fetch(fileName)
         .then(response => {
             if (!response.ok) {
                 console.warn(`Error loading from ${fileName}: ${response.status}`);
-                return null; // Return null to indicate file not found or error
+                return null;
             }
             return response.text();
         })
         .then(text => {
             if (!text) return null;
             
-            let data;
             try {
-                // Try to parse as regular JSON first
-                data = JSON.parse(text);
+                // Parse the JSON
+                const data = JSON.parse(text);
+                console.log(`Successfully parsed ${fileName}`);
+                
+                // Extract games based on the structure
+                let games = [];
+                
+                if (Array.isArray(data)) {
+                    // Format: [{game: {...}}, {game: {...}}]
+                    games = data.map(item => {
+                        // Handle both formats: {game: {...}} and directly {...}
+                        return item.game || item;
+                    });
+                } else if (data && data.games && Array.isArray(data.games)) {
+                    // Format: {games: [{...}, {...}]}
+                    games = data.games.map(item => item.game || item);
+                } else if (data && typeof data === 'object') {
+                    // Single game object
+                    games = [data.game || data];
+                }
+                
+                console.log(`Extracted ${games.length} games from ${fileName}`);
+                return games;
             } catch (error) {
-                console.warn(`Could not parse ${fileName} directly, trying alternative method`, error);
-                
-                // If the JSON is invalid or in an unusual format, try to extract the games
-                try {
-                    // Attempt to manually create the structure
-                    const processedText = `{"games":[${text}]}`;
-                    data = JSON.parse(processedText);
-                } catch (innerError) {
-                    console.error(`Failed to parse ${fileName} using alternative method`, innerError);
-                    return null;
-                }
-            }
-            
-            // Extract games from the data structure
-            let games = [];
-            
-            // More robust extraction of games array
-            if (data && Array.isArray(data.games)) {
-                games = data.games.map(item => item.game || item);
-            } else if (data && Array.isArray(data)) {
-                games = data.map(item => item.game || item);
-            } else if (data && typeof data === 'object') {
-                // Try to extract from object if it's not an array
-                if (data.game) {
-                    games = [data.game];
-                } else {
-                    games = [data];
-                }
-            }
-            
-            // Enhanced debug logging
-            console.log(`Extracted ${games.length} games from ${fileName}`);
-            console.log(`Looking for game with title matching: "${decodedGameId}" or "${encodedGameId}"`);
-            
-            if (games.length === 0) {
-                // Special case for "Revenge and Justice" if there's no game found
-                if (decodedGameId === "Revenge and Justice" || 
-                    encodedGameId === "Revenge%20and%20Justice") {
-                    console.log("Manually loading Revenge and Justice game");
-                    return {
-                        title: "Revenge and Justice",
-                        description: "Revenge and Justice is a gripping tale of vengeance, survival, and redemption in a world ravaged by destruction. Step into the role of a lone survivor seeking justice against those who destroyed everything.",
-                        url: "https://html5.gamedistribution.com/ded5788b27ca45c9b0934c2186de9749/?gd_sdk_referrer_url=https://gamedistribution.com/games/revenge-and-justice",
-                        instructions: "Mouse - Shooting, WASD keys - Move, Spacebar - Jump, SHIFT - Run, R - Reload, Q - Roll, P - Pause",
-                        categoryList: [
-                            {name: "Action Games"},
-                            {name: "Shooting Games"},
-                            {name: "Adventure Games"}
-                        ]
-                    };
-                }
-                
-                // Special case for "Axe of the Ancients: Dwarven Fury" if there's no game found
-                if (decodedGameId === "Axe of the Ancients: Dwarven Fury" || 
-                    encodedGameId === "Axe%20of%20the%20Ancients%3A%20Dwarven%20Fury") {
-                    console.log("Manually loading Axe of the Ancients: Dwarven Fury game");
-                    return {
-                        title: "Axe of the Ancients: Dwarven Fury",
-                        description: "Axe of the Ancients: Dwarven Fury is an epic action hack-and-slash adventure, blending stunning visuals with classic gameplay inspired by Warcraft and Golden Axe. Step into the boots of Thorgar, a mighty dwarven warrior on a quest for revenge.",
-                        url: "https://html5.gamedistribution.com/c3238ecc4c3f4550a8f9fc9599cbc189/?gd_sdk_referrer_url=https://gamedistribution.com/games/axe-of-the-ancients-dwarven-fury",
-                        instructions: "Left mouse button - Attack, Right mouse button - Lock on enemy, WASD keys - Move, Spacebar - Jump, SHIFT - Run, E - Strong attack, Q - Roll, P - Pause",
-                        categoryList: [
-                            {name: "Action Games"},
-                            {name: "3D Games"},
-                            {name: "Adventure Games"},
-                            {name: "Fighting Games"},
-                            {name: "HTML5 games"},
-                            {name: "WebGL Games"}
-                        ]
-                    };
-                }
-                
+                console.error(`Error parsing ${fileName}:`, error);
                 return null;
             }
-            
-            // First try exact match with title
-            let game = games.find(g => 
-                g && g.title && (
-                    g.title === decodedGameId || 
-                    encodeURIComponent(g.title) === encodedGameId
-                )
-            );
-            
-            // If exact match fails, try case-insensitive comparison
-            if (!game) {
-                game = games.find(g => 
-                    g && g.title && (
-                        g.title.toLowerCase() === decodedGameId.toLowerCase() || 
-                        encodeURIComponent(g.title.toLowerCase()) === encodedGameId.toLowerCase()
-                    )
-                );
-            }
-            
-            // If still no match and the game is Revenge and Justice, add it manually
-            if (!game && (decodedGameId === "Revenge and Justice" || 
-                         encodedGameId === "Revenge%20and%20Justice")) {
-                console.log("Manually loading Revenge and Justice game");
-                return {
-                    title: "Revenge and Justice",
-                    description: "Revenge and Justice is a gripping tale of vengeance, survival, and redemption in a world ravaged by destruction. Step into the role of a lone survivor seeking justice against those who destroyed everything.",
-                    url: "https://html5.gamedistribution.com/ded5788b27ca45c9b0934c2186de9749/?gd_sdk_referrer_url=https://gamedistribution.com/games/revenge-and-justice",
-                    instructions: "Mouse - Shooting, WASD keys - Move, Spacebar - Jump, SHIFT - Run, R - Reload, Q - Roll, P - Pause",
-                    categoryList: [
-                        {name: "Action Games"},
-                        {name: "Shooting Games"},
-                        {name: "Adventure Games"}
-                    ]
-                };
-            }
-            
-            // If still no match and the game is Axe of the Ancients: Dwarven Fury, add it manually
-            if (!game && (decodedGameId === "Axe of the Ancients: Dwarven Fury" || 
-                         encodedGameId === "Axe%20of%20the%20Ancients%3A%20Dwarven%20Fury")) {
-                console.log("Manually loading Axe of the Ancients: Dwarven Fury game");
-                return {
-                    title: "Axe of the Ancients: Dwarven Fury",
-                    description: "Axe of the Ancients: Dwarven Fury is an epic action hack-and-slash adventure, blending stunning visuals with classic gameplay inspired by Warcraft and Golden Axe. Step into the boots of Thorgar, a mighty dwarven warrior on a quest for revenge.",
-                    url: "https://html5.gamedistribution.com/c3238ecc4c3f4550a8f9fc9599cbc189/?gd_sdk_referrer_url=https://gamedistribution.com/games/axe-of-the-ancients-dwarven-fury",
-                    instructions: "Left mouse button - Attack, Right mouse button - Lock on enemy, WASD keys - Move, Spacebar - Jump, SHIFT - Run, E - Strong attack, Q - Roll, P - Pause",
-                    categoryList: [
-                        {name: "Action Games"},
-                        {name: "3D Games"},
-                        {name: "Adventure Games"},
-                        {name: "Fighting Games"},
-                        {name: "HTML5 games"},
-                        {name: "WebGL Games"}
-                    ]
-                };
-            }
-            
-            return game || null;
         })
         .catch(error => {
             console.error(`Error processing ${fileName}:`, error);
             return null;
         });
+}
+
+// Helper function to find a game by title
+function findGameByTitle(games, decodedGameId, encodedGameId) {
+    if (!games || games.length === 0) return null;
+    
+    // First try exact match
+    let game = games.find(g => 
+        g && g.title && (
+            g.title === decodedGameId || 
+            encodeURIComponent(g.title) === encodedGameId
+        )
+    );
+    
+    // If exact match fails, try case-insensitive comparison
+    if (!game) {
+        game = games.find(g => 
+            g && g.title && (
+                g.title.toLowerCase() === decodedGameId.toLowerCase() || 
+                encodeURIComponent(g.title.toLowerCase()) === encodedGameId.toLowerCase()
+            )
+        );
+    }
+    
+    return game;
 }
 
 function updatePlayer(game) {
