@@ -1,3 +1,8 @@
+// Debug logging for network issues
+console.log('Player.js - Current URL:', window.location.href);
+console.log('Player.js - Current path:', window.location.pathname);
+console.log('Player.js - Current origin:', window.location.origin);
+
 // Global variables
 let gameData = null;
 let isTheaterMode = false;
@@ -115,10 +120,14 @@ function loadGameData(gameId) {
 
 // Helper function to fetch and parse a game file
 function fetchAndParseGameFile(fileName) {
-    return fetch(fileName)
+    // Create a more robust URL that works in all environments
+    const baseUrl = new URL(fileName, window.location.href).href;
+    console.log(`Player: Attempting to fetch from: ${baseUrl} (original: ${fileName})`);
+    
+    return fetch(baseUrl)
         .then(response => {
             if (!response.ok) {
-                console.warn(`Error loading from ${fileName}: ${response.status}`);
+                console.warn(`Error loading from ${baseUrl}: ${response.status}`);
                 return null;
             }
             return response.text();
@@ -129,7 +138,7 @@ function fetchAndParseGameFile(fileName) {
             try {
                 // Parse the JSON
                 const data = JSON.parse(text);
-                console.log(`Successfully parsed ${fileName}`);
+                console.log(`Successfully parsed ${baseUrl}`);
                 
                 // Extract games based on the structure
                 let games = [];
@@ -148,15 +157,15 @@ function fetchAndParseGameFile(fileName) {
                     games = [data.game || data];
                 }
                 
-                console.log(`Extracted ${games.length} games from ${fileName}`);
+                console.log(`Extracted ${games.length} games from ${baseUrl}`);
                 return games;
             } catch (error) {
-                console.error(`Error parsing ${fileName}:`, error);
+                console.error(`Error parsing ${baseUrl}:`, error);
                 return null;
             }
         })
         .catch(error => {
-            console.error(`Error processing ${fileName}:`, error);
+            console.error(`Error processing ${baseUrl}:`, error);
             return null;
         });
 }

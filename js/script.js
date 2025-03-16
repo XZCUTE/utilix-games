@@ -1,4 +1,17 @@
 // Global variables
+// Debug logging for network issues
+console.log('Current URL:', window.location.href);
+console.log('Current path:', window.location.pathname);
+console.log('Current origin:', window.location.origin);
+// Log fetch errors globally
+window.addEventListener('error', function(e) {
+  console.error('Global error caught:', e.message, e.filename);
+});
+// Log network errors
+window.addEventListener('unhandledrejection', function(e) {
+  console.error('Unhandled promise rejection (network error?):', e.reason);
+});
+
 let gamesData = [];
 let additionalGames = []; // Store additional games separately
 let filteredGames = [];
@@ -169,10 +182,13 @@ async function loadGamesData() {
 // Helper function to fetch and parse a game file
 async function fetchAndParseGames(fileName) {
     try {
-        // Remove the leading slash to make it a relative path
-        const response = await fetch(fileName);
+        // Create a more robust URL that works in all environments
+        const baseUrl = new URL(fileName, window.location.href).href;
+        console.log(`Attempting to fetch from: ${baseUrl} (original: ${fileName})`);
+        
+        const response = await fetch(baseUrl);
         if (!response.ok) {
-            console.warn(`Error loading from ${fileName}: ${response.status}`);
+            console.warn(`Error loading from ${baseUrl}: ${response.status}`);
             return [];
         }
         
