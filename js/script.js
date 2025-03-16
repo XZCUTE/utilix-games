@@ -169,7 +169,7 @@ async function loadGamesData() {
 // Helper function to fetch and parse a game file
 async function fetchAndParseGames(fileName) {
     try {
-        // Remove leading slash to make path relative to current directory
+        // Remove the leading slash to make it a relative path
         const response = await fetch(fileName);
         if (!response.ok) {
             console.warn(`Error loading from ${fileName}: ${response.status}`);
