@@ -326,27 +326,9 @@ function openGameModal(game) {
     document.getElementById('modal-game-title').textContent = game.title;
     
     // Update image
-    const modalImg = document.getElementById('modal-game-image');
-    
-    // IMPORTANT: Set a default image first, before any logic
-    let imageUrl = 'img/placeholder.jpg';
-    
-    // Special case for specific games to ensure they always have images - checking first
-    if (game.title === "Axe of the Ancients: Dwarven Fury") {
-        console.log("Using hardcoded image for Axe of the Ancients: Dwarven Fury");
-        imageUrl = "https://img.gamedistribution.com/c3238ecc4c3f4550a8f9fc9599cbc189-512x384.jpeg";
-    } else if (game.title === "Revenge and Justice") {
-        console.log("Using hardcoded image for Revenge and Justice");
-        imageUrl = "https://img.gamedistribution.com/ded5788b27ca45c9b0934c2186de9749-512x384.jpeg";
-    } else if (game.title === "Arena Baby Tournament") {
-        console.log("Using hardcoded image for Arena Baby Tournament");
-        imageUrl = "https://img.gamedistribution.com/18de67bea855444c9c571868cc405c1d-512x384.jpeg";
-    } else if (game.title === "Two Hands of Satan") {
-        console.log("Using hardcoded image for Two Hands of Satan");
-        imageUrl = "https://img.gamedistribution.com/ae98387afcf84c0da38e5ab0e70e5235-512x384.jpeg";
-    } 
+    const modalImg = document.getElementById('modal-game-image')
     // Only check assetList if we didn't already set a hardcoded image
-    else if (game.assetList && game.assetList.length > 0) {
+    if (game.assetList && game.assetList.length > 0) {
         const assetList = Array.isArray(game.assetList) ? game.assetList : [game.assetList];
         const thumbnails = assetList.filter(asset => 
             asset.type === 'thumbnail' || 
