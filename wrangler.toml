@@ -6,9 +6,19 @@ compatibility_flags = ["nodejs_compat"]
 bucket = "."
 
 [build]
-command = ""
+command = "npm install && npm run build"
 upload.format = "directory"
 output_directory = "."
+watch_dir = ["js", "css", "public", "*.html", "*.json"]
+
+[dev]
+port = 8788
+local_protocol = "http"
+upstream_protocol = "http"
+
+# Environment variables
+[vars]
+NODE_ENV = "production"
 
 # Ensure all routes direct to index.html for single-page application
 [[routes]]
