@@ -430,9 +430,11 @@ function openGameModal(game) {
     // Update instructions
     document.getElementById('modal-game-instructions').innerHTML = game.instructions || 'No specific instructions provided. Use standard game controls.';
     
-    // Set play button link
+    // Set play button link - determine whether to use player.html or player
+    const isCleanUrls = window.location.pathname === "/" || !window.location.pathname.includes('.html');
+    const playerPath = isCleanUrls ? 'player' : 'player.html';
     const playBtn = document.getElementById('modal-play-btn');
-    playBtn.href = `player.html?id=${encodeURIComponent(game.title)}`;
+    playBtn.href = `${playerPath}?id=${encodeURIComponent(game.title)}`;
     
     // Show modal
     modal.classList.add('show');
@@ -810,8 +812,12 @@ document.addEventListener('click', function(event) {
             // Find the game in our data
             const game = [...gamesData, ...additionalGames].find(g => g.title === gameTitle);
             if (game) {
+                // Determine whether to use player.html or player
+                const isCleanUrls = window.location.pathname === "/" || !window.location.pathname.includes('.html');
+                const playerPath = isCleanUrls ? 'player' : 'player.html';
+                
                 // Navigate to the player page with this game
-                window.location.href = `player.html?id=${encodeURIComponent(game.title)}`;
+                window.location.href = `${playerPath}?id=${encodeURIComponent(game.title)}`;
             }
         }
     }

@@ -2,6 +2,7 @@
 console.log('Player.js - Current URL:', window.location.href);
 console.log('Player.js - Current path:', window.location.pathname);
 console.log('Player.js - Current origin:', window.location.origin);
+console.log('Player.js - Clean URL detection:', window.location.pathname === "/player" || window.location.pathname === "/player/");
 
 // Global variables
 let gameData = null;
