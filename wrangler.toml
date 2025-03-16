@@ -1,5 +1,5 @@
 # Wrangler configuration for Cloudflare Pages
-name = "utilix-games"
+name = "utilixgames"
 type = "webpack"
 account_id = ""  # Your Cloudflare account ID will be inserted automatically
 workers_dev = true
@@ -10,6 +10,3 @@ compatibility_date = "2025-03-16"
 [build]
 command = ""  # No build command needed for static site
 upload.format = "directory"
-
-[env.production]
-# Production-specific variables go here
