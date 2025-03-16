@@ -142,18 +142,10 @@ async function loadGamesData() {
         // Show loading status
         isLoading = true;
         
-        // Set base path based on window location
-        // This ensures we use the correct path whether we're on the main domain or a deployment URL
-        const basePath = window.location.pathname.includes('/index.html') 
-            ? window.location.pathname.replace('/index.html', '/')
-            : '/';
-        
-        console.log(`Loading games from base path: ${basePath}`);
-        
-        // Load and parse both game files with absolute paths from root
+        // Load and parse both game files
         const [distributionGamesData, additionalGamesData] = await Promise.all([
-            fetchAndParseGames(basePath + 'distributiongames.json'),
-            fetchAndParseGames(basePath + 'additionalgames.json')
+            fetchAndParseGames('distributiongames.json'),
+            fetchAndParseGames('additionalgames.json')
         ]);
         
         // Store additional games separately
@@ -326,8 +318,9 @@ function openGameModal(game) {
     document.getElementById('modal-game-title').textContent = game.title;
     
     // Update image
-    const modalImg = document.getElementById('modal-game-image')
-    // Only check assetList if we didn't already set a hardcoded image
+    const modalImg = document.getElementById('modal-game-image');
+    let imageUrl = 'img/placeholder.jpg';
+    
     if (game.assetList && game.assetList.length > 0) {
         const assetList = Array.isArray(game.assetList) ? game.assetList : [game.assetList];
         const thumbnails = assetList.filter(asset => 
@@ -337,13 +330,18 @@ function openGameModal(game) {
         
         if (thumbnails.length > 0) {
             imageUrl = thumbnails[0].url;
-        } else {
-            // Use the first asset if no explicit thumbnail
-            imageUrl = assetList[0].url || assetList[0].name || imageUrl;
         }
     }
     
-    console.log(`Setting modal image for ${game.title}: ${imageUrl}`);
+    // Special case for specific games to ensure they always have images
+    if (game.title === "Axe of the Ancients: Dwarven Fury") {
+        imageUrl = "https://img.gamedistribution.com/c3238ecc4c3f4550a8f9fc9599cbc189-512x384.jpeg";
+    } else if (game.title === "Revenge and Justice") {
+        imageUrl = "https://img.gamedistribution.com/ded5788b27ca45c9b0934c2186de9749-512x384.jpeg";
+    } else if (game.title === "Arena Baby Tournament") {
+        imageUrl = "https://img.gamedistribution.com/18de67bea855444c9c571868cc405c1d-512x384.jpeg";
+    }
+    
     modalImg.src = imageUrl;
     modalImg.alt = game.title;
     

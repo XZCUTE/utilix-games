@@ -1,8 +1,0 @@
-# Redirect default Netlify subdomain to primary domain
-https://utilix-games.pages.dev/* https://utilix-games.pages.dev/:splat 301!
-
-# Redirect old paths to new paths if needed
-# /old-page /new-page 301
-
-# SPA fallback (for client-side routing)
-/* /index.html 200 
