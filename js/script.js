@@ -274,15 +274,90 @@ function displayGames(games, page) {
     });
 }
 
+// Helper function to get the best available image URL for a game
+function getGameImageUrl(game) {
+    let imageUrl = 'img/placeholder.jpg';
+    
+    // First try gamedistribution thumbnails if we can construct the URL
+    if (game.url && game.url.includes('gamedistribution.com')) {
+        try {
+            // Extract the game ID from the URL
+            const urlParts = game.url.split('/');
+            const gdGameId = urlParts[3].split('?')[0];
+            if (gdGameId && gdGameId.length > 10) {
+                imageUrl = `https://img.gamedistribution.com/${gdGameId}-512x384.jpeg`;
+            }
+        } catch (error) {
+            console.warn(`Failed to construct GameDistribution image URL for ${game.title}`, error);
+        }
+    }
+    
+    // If available, use the assetList
+    if (game.assetList && game.assetList.length > 0) {
+        const assetList = Array.isArray(game.assetList) ? game.assetList : [game.assetList];
+        // Look for thumbnail images specifically
+        const thumbnails = assetList.filter(asset => 
+            asset.type === 'thumbnail' || 
+            (asset.name && asset.name.includes('thumbnail')) ||
+            (asset.url && asset.url.includes('thumbnail'))
+        );
+        
+        if (thumbnails.length > 0) {
+            // Prioritize assets with an explicit URL property
+            const assetWithUrl = thumbnails.find(asset => asset.url);
+            if (assetWithUrl) {
+                imageUrl = assetWithUrl.url;
+            } 
+            // If no URL property, try the name property
+            else if (thumbnails[0].name) {
+                imageUrl = thumbnails[0].name;
+            }
+        } 
+        // If no thumbnails found, use the first asset
+        else if (assetList[0].url) {
+            imageUrl = assetList[0].url;
+        } else if (assetList[0].name) {
+            imageUrl = assetList[0].name;
+        }
+    }
+    
+    // Also check for direct image property
+    if (game.image) {
+        imageUrl = game.image;
+    }
+    
+    // Special case for specific games to ensure they always have images
+    if (game.title === "Axe of the Ancients: Dwarven Fury") {
+        imageUrl = "https://img.gamedistribution.com/c3238ecc4c3f4550a8f9fc9599cbc189-512x384.jpeg";
+    } else if (game.title === "Revenge and Justice") {
+        imageUrl = "https://img.gamedistribution.com/ded5788b27ca45c9b0934c2186de9749-512x384.jpeg";
+    } else if (game.title === "Arena Baby Tournament") {
+        imageUrl = "https://img.gamedistribution.com/18de67bea855444c9c571868cc405c1d-512x384.jpeg";
+    }
+    
+    // Add fallback for game URLs from gamedistribution.com that might have been missed
+    if (imageUrl === 'img/placeholder.jpg' && game.url && game.url.includes('gamedistribution.com')) {
+        // One more attempt to extract game ID from URL
+        try {
+            const gdGameId = game.url.match(/\/([a-f0-9]{32})\//i);
+            if (gdGameId && gdGameId[1]) {
+                imageUrl = `https://img.gamedistribution.com/${gdGameId[1]}-512x384.jpeg`;
+            }
+        } catch (error) {
+            console.warn(`Failed to extract GameDistribution ID for ${game.title}`, error);
+        }
+    }
+    
+    return imageUrl;
+}
+
 // Create a game card element
 function createGameCard(game) {
     const card = document.createElement('div');
     card.className = 'game-card';
     
-    // Get the first image from assetList if available
-    const imageUrl = game.assetList && game.assetList.length > 0
-        ? game.assetList[0].name
-        : 'https://via.placeholder.com/400x300?text=No+Image';
+    // Get the best available image URL
+    const imageUrl = getGameImageUrl(game);
     
     // Get up to 3 categories
     const categories = game.categoryList 
@@ -295,7 +370,7 @@ function createGameCard(game) {
         : 'No description available';
     
     card.innerHTML = `
-        <img src="${imageUrl}" alt="${game.title}" class="game-img">
+        <img src="${imageUrl}" alt="${game.title}" class="game-img" onerror="this.src='img/placeholder.jpg'">
         <div class="game-info">
             <h3 class="game-title">${game.title}</h3>
             <div class="game-category">${categories}</div>
@@ -319,28 +394,14 @@ function openGameModal(game) {
     
     // Update image
     const modalImg = document.getElementById('modal-game-image');
-    let imageUrl = 'img/placeholder.jpg';
+    let imageUrl = getGameImageUrl(game);
     
-    if (game.assetList && game.assetList.length > 0) {
-        const assetList = Array.isArray(game.assetList) ? game.assetList : [game.assetList];
-        const thumbnails = assetList.filter(asset => 
-            asset.type === 'thumbnail' || 
-            (asset.url && asset.url.includes('thumbnail'))
-        );
-        
-        if (thumbnails.length > 0) {
-            imageUrl = thumbnails[0].url;
-        }
-    }
-    
-    // Special case for specific games to ensure they always have images
-    if (game.title === "Axe of the Ancients: Dwarven Fury") {
-        imageUrl = "https://img.gamedistribution.com/c3238ecc4c3f4550a8f9fc9599cbc189-512x384.jpeg";
-    } else if (game.title === "Revenge and Justice") {
-        imageUrl = "https://img.gamedistribution.com/ded5788b27ca45c9b0934c2186de9749-512x384.jpeg";
-    } else if (game.title === "Arena Baby Tournament") {
-        imageUrl = "https://img.gamedistribution.com/18de67bea855444c9c571868cc405c1d-512x384.jpeg";
-    }
+    // Set the image with error handling
+    modalImg.onerror = function() {
+        console.warn(`Image failed to load for ${game.title}: ${imageUrl}`);
+        this.src = 'img/placeholder.jpg';
+        this.onerror = null; // Prevent infinite loops
+    };
     
     modalImg.src = imageUrl;
     modalImg.alt = game.title;
@@ -629,6 +690,9 @@ function createFirstLetterCard(game) {
     // Get the first letter of the game title
     const firstLetter = game.title.charAt(0).toUpperCase();
     
+    // Get game image using the helper function
+    const gameImage = getGameImageUrl(game);
+    
     // Generate a consistent background color based on the first letter
     const letterColors = {
         'A': 'linear-gradient(135deg, #9147ff, #7033cc)',
@@ -662,10 +726,24 @@ function createFirstLetterCard(game) {
     // Default gradient for numbers or symbols
     const backgroundGradient = letterColors[firstLetter] || 'linear-gradient(135deg, var(--primary-dark), var(--primary))';
     
+    // Determine whether to use a letter or an image
+    let displayElement;
+    if (gameImage && gameImage !== 'img/placeholder.jpg') {
+        // Use image if available
+        displayElement = `
+            <img src="${gameImage}" alt="${game.title}" onerror="this.onerror=null; this.parentElement.innerHTML='<span>${firstLetter}</span>'; this.parentElement.style.background='${backgroundGradient}';">
+        `;
+    } else {
+        // Use letter display with gradient background
+        displayElement = `
+            <span>${firstLetter}</span>
+        `;
+    }
+    
     gameCard.innerHTML = `
         <div class="new-badge">NEW</div>
-        <div class="letter-display" style="background: ${backgroundGradient}">
-            <span>${firstLetter}</span>
+        <div class="letter-display" style="background: ${gameImage !== 'img/placeholder.jpg' ? 'none' : backgroundGradient}">
+            ${displayElement}
         </div>
         <div class="game-info">
             <h3 class="game-title">${game.title}</h3>

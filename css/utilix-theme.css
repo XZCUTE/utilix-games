@@ -953,148 +953,121 @@ a:hover {
     margin-top: 0.5rem;
 }
 
-/* First Letter Game Card Styles */
+/* New Games Section with First Letter Cards */
 .first-letter-card {
-    position: relative;
-    overflow: hidden;
-    border-radius: 12px;
     background-color: var(--card-bg);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    animation: fadeInUp 0.5s ease forwards;
-    opacity: 0;
-    transform: translateY(20px);
-}
-
-@keyframes fadeInUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .first-letter-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
 }
 
-.letter-display {
-    width: 100%;
-    padding-top: 80%;
-    background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+.first-letter-card .letter-display {
     position: relative;
+    padding-top: 60%; /* 3:2 aspect ratio */
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    background-size: cover !important;
+    background-position: center !important;
 }
 
-.letter-display::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 30%;
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.5), transparent);
-}
-
-.letter-display span {
+.first-letter-card .letter-display span {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 5rem;
+    font-size: 3rem;
     font-weight: 700;
     color: white;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.first-letter-card .letter-display img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.first-letter-card:hover .letter-display img {
+    transform: scale(1.05);
 }
 
 .first-letter-card .game-info {
-    padding: 1rem;
+    padding: 15px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .first-letter-card .game-title {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 10px;
     color: var(--light-text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
 .first-letter-card .game-category {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
+    gap: 5px;
+    margin-bottom: 15px;
 }
 
 .first-letter-card .category {
-    background-color: rgba(145, 71, 255, 0.15);
-    color: var(--primary);
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: 500;
+    background-color: var(--secondary-dark);
+    color: var(--light-text);
+    font-size: 0.75rem;
+    padding: 3px 8px;
+    border-radius: 12px;
 }
 
 .first-letter-card .play-btn {
-    width: 100%;
-    background-color: var(--primary);
-    color: white;
+    background: var(--accent-gradient);
+    color: var(--light-text);
     border: none;
-    padding: 0.5rem;
-    border-radius: 6px;
+    padding: 8px 15px;
+    border-radius: 20px;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 1rem;
-    transition: background-color 0.2s ease;
+    margin-top: auto;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    text-align: center;
 }
 
 .first-letter-card .play-btn:hover {
-    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-/* New Badge */
 .new-badge {
     position: absolute;
     top: 10px;
     right: 10px;
     background-color: var(--accent);
     color: white;
-    padding: 0.25rem 0.6rem;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    z-index: 2;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 12px;
+    z-index: 1;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    animation: pulse 2s infinite;
 }
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-/* Delay animation for each card */
-#new-games-container .first-letter-card:nth-child(1) { animation-delay: 0.1s; }
-#new-games-container .first-letter-card:nth-child(2) { animation-delay: 0.2s; }
-#new-games-container .first-letter-card:nth-child(3) { animation-delay: 0.3s; }
-#new-games-container .first-letter-card:nth-child(4) { animation-delay: 0.4s; }
-#new-games-container .first-letter-card:nth-child(5) { animation-delay: 0.5s; }
-#new-games-container .first-letter-card:nth-child(6) { animation-delay: 0.6s; }
-#new-games-container .first-letter-card:nth-child(7) { animation-delay: 0.7s; }
-#new-games-container .first-letter-card:nth-child(8) { animation-delay: 0.8s; }
 
 /* Special Button Style */
 .special-btn {
